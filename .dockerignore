@@ -1,0 +1,33 @@
+# Ignorar diretórios de controle de versão
+.git
+.gitignore
+
+# Ignorar ambientes virtuais e dependências Python
+venv/
+env/
+ENV/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignorar dependências do Node/React
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Ignorar arquivos e pastas gerados pela build
+build/
+dist/
+staticfiles/
+
+# Ignorar arquivos de log
+*.log
+
+# Ignorar arquivos de configuração locais
+.env
+.env.*
+
+# Ignorar outros arquivos temporários
+tmp/

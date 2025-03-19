@@ -1,0 +1,73 @@
+version: '3'
+services:
+  db:
+    image: postgres:alpine
+    environment:
+      POSTGRES_DB: ascinc-api
+      POSTGRES_USER: ascinc_user
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  django:
+    build: ./backend
+    command: gunicorn core.wsgi:application --bind 0.0.0.0:8000 --log-level error
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+
+  celery:
+    build: ./backend
+    command: celery -A core worker --loglevel=error
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - django
+      - redis
+
+  react:
+    build: ./frontend
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "3000:3000"
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+  celery-exporter:
+    build: ./celery-exporter
+    ports:
+      - "5555:8888"
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+      - celery
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus:/etc/prometheus
+    ports:
+      - "9090:9090"
+    build: ./prometheus
+    command: ["--config.file=/etc/prometheus/prometheus.yml", "--log.level=error"]
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3001:3000"
+    environment:
+    - GF_LOG_LEVEL=error
+
+volumes:
+  pgdata:
