@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-backend
+  labels:
+    app: django
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: django
+  template:
+    metadata:
+      labels:
+        app: django
+    spec:
+      containers:
+      - name: django
+        image: thiagocmach/django-backend:latest
+        ports:
+        - containerPort: 8000
+        env:
+          - name: DATABASE_HOST
+            value: "db"
+          - name: REDIS_HOST
+            value: "redis"
+          # outras variáveis de ambiente necessárias

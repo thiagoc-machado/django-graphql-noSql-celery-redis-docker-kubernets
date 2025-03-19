@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery-exporter
+  labels:
+    app: celery-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: celery-exporter
+  template:
+    metadata:
+      labels:
+        app: celery-exporter
+    spec:
+      containers:
+      - name: celery-exporter
+        image: thiagocmach/celery-exporter:latest
+        ports:
+        - containerPort: 8888
+        env:
+          - name: CELERY_BROKER_URL
+            value: "redis://redis:6379/0"

@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery
+  labels:
+    app: celery
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: celery
+  template:
+    metadata:
+      labels:
+        app: celery
+    spec:
+      containers:
+      - name: celery
+        image: thiagocmach/django-backend:latest  # Use a mesma imagem do backend ou uma adaptada para o worker
+        command: ["celery", "-A", "core", "worker", "--loglevel=error"]
+        env:
+          - name: DATABASE_HOST
+            value: "db"
+          - name: REDIS_HOST
+            value: "redis"
+        # Monte volumes se necessário

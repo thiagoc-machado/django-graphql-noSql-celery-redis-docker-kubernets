@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db
+  labels:
+    app: db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      containers:
+      - name: db
+        image: postgres:alpine
+        ports:
+        - containerPort: 5432
+        env:
+          - name: POSTGRES_DB
+            value: "ascinc-api"
+          - name: POSTGRES_USER
+            value: "ascinc_user"
+          - name: POSTGRES_PASSWORD
+            value: "postgres"
+        volumeMounts:
+          - name: pgdata
+            mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: pgdata
+          emptyDir: {}  # Em produção, use PersistentVolumeClaim (PVC)
